@@ -1,0 +1,164 @@
+<!DOCTYPE>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+	<link rel="stylesheet" href="plugin/mobile/jquery.mobile-1.4.5.min.css">
+	<link rel="stylesheet" href="plugin/mobile/demos/_assets/css/jqm-demos.css">
+	<script src="plugin/mobile/demos/js/jquery.js"></script>
+	<script src="plugin/mobile/demos/_assets/js/index.js"></script>
+	<script src="plugin/mobile/jquery.mobile-1.4.5.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script src="js/funciones.js"></script>
+    <script type="text/javascript" src="js/transporte.js"></script>
+    <style type="text/css">
+	
+	.ui-li-static:hover{
+		background-color:#123456;
+		color:white;
+	}
+	.ui-input-search{
+		border:none;
+	}
+	
+	#listTransporte li a{
+		background-color:white;
+		padding:0px;
+	}
+	
+	#listTransporte li a table td{
+		padding:4px 8px;
+	}
+	
+	#listTransporte li a table td.titulo{
+		background-color:#989696;
+		color:white;
+		padding:6px 8px;
+	}
+	.ui-listview .ui-btn-icon-notext:after,
+	.ui-listview .ui-btn-icon-left:after, 
+	.ui-listview .ui-btn-icon-right:after{
+		top:14px;
+		background-color:rgba(0,0,0,0);
+		right:5px;
+	}
+	</style>
+<title>OPERATIVO</title>
+</head>
+
+<body>
+
+
+
+<div data-role="page">
+
+	<div class="bgBlue" style="padding:15px 0;" data-role="header" data-theme="b">
+		<h1>RASTREO & SEGUIMIENTO</h1>
+	</div><!-- /header -->
+	<div style="height:0px; padding:0px; background-color:white;" class="buscador">
+        
+        </div>
+	<div role="main" class="ui-content">
+   
+   
+     <div style="font-weight:bold; padding-bottom:5px;">
+    Puerto: <span id="ptoName"></span> - Vehiculos de Transportes 
+   
+   </div>
+    
+    
+    
+        	<form class="ui-filterable"><input id="rich-autocomplete-input-DAD" data-type="search" placeholder="Buscar..."></form>
+        <ul id="listTransporte" data-role="listview" data-filter="true" data-inset="true" data-input="#rich-autocomplete-input-DAD">
+        </ul>
+        
+         
+        
+        
+        
+        
+        <!-- popup -->
+        <div data-role="popup" id="myPopup"  data-overlay-theme="b">
+      	 	<div data-role="header">
+        <h1>Transporte</h1>
+    </div><!-- /header -->
+    <div data-role="content">
+        
+        <form>
+        	 <div class="contentInput">
+             <label>Placa: </label>             
+             <!--<input type="text" name="placa" id="placa" value=""  />-->
+             <ul class="autocomplete autocompletePlaca"  data-role="listview" data-inset="true" data-filter="true" 
+		  data-filter-placeholder="Buscar placa" data-filter-theme="d"></ul>
+          
+          	<input type="hidden" name="idPlaca" id="idPlaca" value="" />
+          	</div>
+          
+          	<div class="contentInput">
+            <label>Conductor: </label>        
+             <ul class="autocomplete autocompleteConductor"  data-role="listview" data-inset="true" data-filter="true" 
+		  data-filter-placeholder="Buscar coductor" data-filter-theme="d"></ul>
+             
+             <input type="hidden" name="idConductor" id="idConductor" value="" />
+            </div> 
+             
+        </form>
+        
+    </div><!-- /content -->
+    <div data-role="footer">
+        
+        
+        <div data-role="navbar" data-iconpos="top">
+		<ul>
+			<li><a href="#" id="agregarDatos" data-icon="plus">Agregar</a></li>
+            
+           	 
+		</ul>
+	</div>
+        
+        
+    </div><!-- /footer -->
+           
+      		<a style="right: 4px; top: 4px;" href="#pageone" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Cerrar</a>
+      
+      
+      
+      
+    </div>
+    
+     <!-- fin popup -->
+    
+        
+        
+        
+        
+	</div><!-- /content -->
+
+	 
+    
+    
+    
+    <div data-role="footer" data-position="fixed">
+		<div data-role="navbar" data-iconpos="top">
+		<ul>
+        	<li><a id="btnConfirmar" data-icon="check">Confirmar</a></li>	
+        
+			
+			
+            <li><a href="index.html" data-ajax="false" data-icon="back">Regresar</a></li>		
+            
+            <li><a id="btnAgregar"  href="#myPopup" data-rel="popup" data-position-to="window"  data-icon="plus">Agregar Unidad</a></li>
+            
+		</ul>
+	</div><!-- /navbar -->
+	</div>
+    
+    
+    
+</div><!-- /page -->
+
+
+</body>
+</html>

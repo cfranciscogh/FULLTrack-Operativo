@@ -1,0 +1,66 @@
+<!DOCTYPE>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+	<link rel="stylesheet" href="plugin/mobile/jquery.mobile-1.4.5.min.css">
+	<link rel="stylesheet" href="plugin/mobile/demos/_assets/css/jqm-demos.css">
+	<script src="plugin/mobile/demos/js/jquery.js"></script>
+	<script src="plugin/mobile/demos/_assets/js/index.js"></script>
+	<script src="plugin/mobile/jquery.mobile-1.4.5.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script src="js/funciones.js"></script>
+<title>OPERATIVO</title>
+</head>
+
+<body>
+
+
+
+<div data-role="page">
+
+	<div class="bgBlue" style="padding:15px 0;" data-role="header" data-theme="b">
+		<h1>RASTREO & SEGUIMIENTO</h1>
+	</div><!-- /header -->
+	<div style="height:0px; padding:0px; background-color:white;" class="buscador">
+        
+        </div>
+	<div role="main" class="ui-content">
+    <br><br>
+    Puerto Descarga<BR>
+    <span style="font-size:12px;">Seleccione un puerto de la lista:</span>
+    <ul data-role="listview" data-inset="true">
+    <li style="padding:0px;" data-role="list-divider">&nbsp;</li>
+    <li><a data-ajax="false"  href="transporte.html?puerto=apm" style="text-align:center;padding:15px;background-color: white;min-height: 30px;padding-right:45px;">
+    <img src="img/logo_apm.jpg" style="position:static; max-width:230px;" width="100%"  ></a></li>
+	<li style="padding:0px;" data-role="list-divider">&nbsp;</li>
+    <li><a data-ajax="false"  href="transporte.html?puerto=dpw" style="text-align:center;padding:15px;background-color: white;min-height: 30px;padding-right:45px;">
+   <img src="img/logo_dp.png" style="position:static; max-width:230px;" width="100%"  >
+    </a></li>
+</ul>
+        
+        
+        
+	</div><!-- /content -->
+
+	 
+    
+    
+    
+    <div data-role="footer" data-position="fixed">
+		<div data-role="navbar" data-iconpos="top">
+		<ul>
+			<li><a onClick="exitFromApp();" data-icon="back">Salir</a></li>
+		</ul>
+	</div><!-- /navbar -->
+	</div>
+    
+    
+    
+</div><!-- /page -->
+
+
+</body>
+</html>
