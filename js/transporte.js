@@ -11,8 +11,6 @@ $( document).on( "click", ".autocomplete li", function() {
 	
 $(document).ready(function(e) {  
 
-
-
 		$( ".autocompletePlaca" ).on( "listviewbeforefilter", function ( e, data ) {        
 			var $ul = $(this);                        // $ul refers to the shell unordered list under the input box
 			var value = $( data.input ).val();        // this is value of what user entered in input box
@@ -21,20 +19,40 @@ $(document).ready(function(e) {
 			
 			// on third character, trigger the drop-down
 			if ( value && value.length > 2 ) {
-			// hard code some values... TO DO: replace with AJAX call
-			var response = ['01111','1112','1113','1114','2116','2117','2119','3111', '21117','21119','3111','1111','1112','1113','1114','2116','2117','2119','3111', '221117','221119','33111','11114','11124','11153','11146','21166','21177','21189','31181', '211187','21119','3111','11111','11112','11113','1114','2116','2117','21192','23111', '221117','321119','31141','11141','111562','11163','11174','21186','21187','21189','31811', '211197','211219','31111'];
-			  
-	  
-			  $('.autocompletePlaca').show();           
-			  $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading' ></span></div></li>" );
-			  $ul.listview( "refresh" );
-			  $.each(response, function( index, val ) {
-				  dropdownContent += "<li id='0'>" + val + "</li>";
-				$ul.html( dropdownContent );
-				$ul.listview( "refresh" );
-				$ul.trigger( "updatelayout");  
-			  });
-        }
+			
+			$('.autocompletePlaca').show();           
+			$ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading' >Buscando...</span></div></li>" );
+			$ul.listview("refresh");
+			dropdownContent = "";
+			
+			$.ajax({
+				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/BuscarPlaca",
+				type: "POST",
+				dataType : "json",
+				data : '{"Apellido":"'+ value +'"}',
+				contentType: "application/json; charset=utf-8",
+				success : function(data, textStatus, jqXHR) {
+					resultado = $.parseJSON(data.d);
+					//console.log(resultado);	
+					if ( resultado.length > 0 ){					
+						for (var i = 0; i<resultado.length;i++){					
+							$(".autocompletePlaca").append("<li id='" + resultado[i].CODIGO + "'>" + resultado[i].PLACA + "</li>");	
+						}						
+					}
+					
+				},
+		
+				error : function(jqxhr) 
+				{
+				   //console.log(jqxhr);	
+				   alerta('Error de conexi\u00f3n, contactese con sistemas!');
+				}	
+			});	
+			
+			$ul.listview("refresh");
+			$ul.trigger( "updatelayout");  
+			
+        	}
       });
 	  
 	  
@@ -50,23 +68,45 @@ $(document).ready(function(e) {
 			// on third character, trigger the drop-down
 			if ( value && value.length > 2 ) {
 			// hard code some values... TO DO: replace with AJAX call
-			var response = ['FRANCISCO','ANGELO','CARLOS', 'LUIS','FELIPE','ARTURO'];
-			  
-	  
-			  $('.autocompleteConductor').show();           
-			  $ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading' >Buscando...</span></div></li>" );
-			  $ul.listview( "refresh" );
-			  $.each(response, function( index, val ) {
-				  dropdownContent += "<li id='1'>" + val + "</li>";
-				$ul.html( dropdownContent );
-				$ul.listview( "refresh" );
-				$ul.trigger( "updatelayout");  
-			  });
+			
+			$('.autocompleteConductor').show();           
+			$ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading' >Buscando...</span></div></li>" );
+			$ul.listview("refresh");
+			dropdownContent = "";
+			
+			$.ajax({
+				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/BuscarChofer",
+				type: "POST",
+				dataType : "json",
+				data : '{"Apellido":"'+ value +'"}',
+				contentType: "application/json; charset=utf-8",
+				success : function(data, textStatus, jqXHR) {
+					resultado = $.parseJSON(data.d);
+					//console.log(resultado);	
+					if ( resultado.length > 0 ){					
+						for (var i = 0; i<resultado.length;i++){					
+							$(".autocompleteConductor").append("<li id='" + resultado[i].CODIGO + "'>" + resultado[i].APELLIDOS + " " + resultado[i].NOMBRES + "</li>");	
+						}						
+					}
+					
+				},
+		
+				error : function(jqxhr) 
+				{
+				   //console.log(jqxhr);	
+				   alerta('Error de conexi\u00f3n, contactese con sistemas!');
+				}	
+			});	
+			
+			$ul.listview("refresh");
+			$ul.trigger( "updatelayout");  
+		  
+			
         }
       });
 	  
 	
-	//getTransportes();
+	getTransportes();
 	
 	 $("form").keypress(function(e) {
         if (e.which == 13) {
@@ -95,50 +135,44 @@ $(document).ready(function(e) {
 			
 			$.mobile.loading('show');
 			var html = "<table cellpadding='0' cellspacing='0' width='100%'>";
-			 html += "<tr><td colspan='2' class='titulo'>Placa Nro:  " + strPlaca +  "</td></tr>";
-			  html += "<tr><td colspan='2'>Conductor:  " + strConductor +  "</td></tr>";
-			   html += "<tr><td>Contenedor Nro:  " + strCTN +  "</td><td>Nro Viaje: 1</td></tr>";
+			 html += "<tr><td colspan='2' class='titulo'>Placa Nro: " + strPlaca +  "</td></tr>";
+			  html += "<tr><td colspan='2'><b>Conductor: </b>" + strConductor +  "</td></tr>";
+			   html += "<tr><td><b>Contenedor Nro: </b>" + strCTN +  "</td><td><b>Nro Viaje:</b> 1</td></tr>";
 			html += "</table>";
 			
-			$("#listTransporte").append('<li><a data-ajax="false" href="contenedor.html?idItem='+ 0 +'&puerto='+$.QueryString["puerto"] +'">  ' + html +  '</a></li> ');
-			$("#myPopup").popup("close");
-			$( "#listTransporte" ).listview( "refresh" );	
+			$("#listTransporte").append('<li><a data-ajax="false" href="detalle.html?codigo='+ 0 +'&puerto='+$.QueryString["puerto"] +'">  ' + html +  '</a></li> ');
 			
-			$.mobile.loading('hide');
 			
-			/*$.ajax({
-				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Sodimac/Pedido/WSPedido.asmx/ObtenerTrakingPorOC",
+			var parametros = new Object();
+			parametros.Seg_cod_unidad = idPlaca;	
+			parametros.Seg_cod_chofer = idConductor;	
+			parametros.Seg_contenedor = "";	
+			parametros.Seg_puerto = $.QueryString["puerto"];	
+			 
+	
+			$.ajax({
+				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/registrarTransporte",
 				type: "POST",
 				dataType : "json",
-				data : '{"oc":"' + $("#oc").val() + '"}',
+				data :JSON.stringify(parametros),
 				contentType: "application/json; charset=utf-8",
 				success : function(data, textStatus, jqXHR) {
-				resultado = $.parseJSON(data.d);
-					//console.log(resultado);
+					console.log(data);
+					resultado = $.parseJSON(data.d);
 					$.mobile.loading('hide');
-					if ( resultado.length > 0  ){
-						if ( resultado[0].IDEstado == 1 ){
-							alerta("OC no ha sida programda.");
-						}
-						else if ( resultado[0].IDEstado == 2 ){
-							actualizarChofer(resultado[0].IDPedido,$.QueryString["idChofer"]);
-						}
-						else{
-							alerta("Pedido ya esta despachado.");
-						}
-					}
-					else{
-						$("#placa").val("");
-						alerta("Placa no existe!");
-						$("#placa").focus();
-					}
+					// if ( resultado.code == 1){
+						$("#myPopup").popup("close");
+						$( "#listTransporte" ).listview( "refresh" );				
+						$.mobile.loading('hide');		
+					// }	
+				 
 				},	
 				error : function(jqxhr) 
 				{
 				   console.log(jqxhr);	
 				   alerta('Error de conexi\u00f3n, contactese con sistemas!');
 				}			
-			});*/
+			});
 		}
 	});
 	
@@ -176,7 +210,7 @@ function actualizarChofer(IDPedido,IDChofer){
 				contentType: "application/json; charset=utf-8",
 				success : function(data, textStatus, jqXHR) {
 				resultado = $.parseJSON(data.d);
-					console.log(resultado);
+					//console.log(resultado);
 					$.mobile.loading('hide');
 					if ( resultado == 1  ){
 						alerta('OC agregada con exito.');
@@ -204,14 +238,14 @@ function getTransportes(){
 	
 	$.mobile.loading('show');
 	//alert($.QueryString["idChofer"]);   
-	$("#listProgramacion").html("");  
-	$("#listProgramacionDAD").html("");  
+	$("#listTransporte").html("");  
+	 
 	$.ajax({
-        url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Sodimac/Pedido/WSPedido.asmx/ConsultarPedidosPicking",
+        url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/ConsultarTransportes",
         type: "POST",
 		//crossDomain: true,
         dataType : "json",
-        data : '{"IDChofer":"'+$.QueryString["idChofer"]+'", "Empresa":"'+$.QueryString["empresa"]+'"}',
+        data : '{"IDSeguimiento":"'+ 0 +'", "Puerto":"'+$.QueryString["puerto"]+'"}',
         //contentType: "xml",
 		contentType: "application/json; charset=utf-8",
         success : function(data, textStatus, jqXHR) {
@@ -220,46 +254,27 @@ function getTransportes(){
 			//console.log(resultado);
 			$.mobile.loading('hide');
 			if ( resultado.length > 0 ){
-				$("#contentProgramaciones").find("h3").remove();
-				$("#contentProgramaciones #divTABS").fadeIn("fast");
+				$("#panelSeguimiento").find("h3").remove();
+			 
 				var count = 0;
-				for (var i = 0; i<resultado.length;i++){
+				for (var i = 0; i<resultado.length;i++){					
 					
-					if ( resultado[i].Operacion == "E" ){
-						//alert(resultado[i].IDEstado);
-						if (  resultado[i].IDEstado == 1 )
-							$("#listProgramacion").append('<input data-pedido="' + resultado[i].IDPedido +  '" disabled="disabled" type="checkbox" name="checkbox-' + i + '" id="checkbox-' + i + '"><label for="checkbox-' + i + '">'+ resultado[i].NroOrdenCompra + ' - ' + resultado[i].NombreCliente +'</label> ');
-						else {
-							 
-				 													 
-							$("#listProgramacion").append('<input data-pedido="' + resultado[i].IDPedido +  '" type="checkbox" name="checkbox-' + i + '" id="checkbox-' + i + '"><label for="checkbox-' + i + '">'+ resultado[i].NroOrdenCompra + ' - ' + resultado[i].NombreCliente +'</label> ');								 
-						}
-						
-						$("#listProgramacion input").checkboxradio().checkboxradio("refresh");
-						//$("#listProgramacion").find("input").last().checkboxradio().checkboxradio("refresh");
-					
-					}
-					if ( resultado[i].Operacion == "D" ){
-						
-						if (  resultado[i].IDEstado == 1 )
-		 				$("#listProgramacionDAD").append('<input data-pedido="' + resultado[i].IDPedido +  '" disabled="disabled" type="checkbox" name="checkbox-' + i + '" id="checkbox-' + i + '"><label for="checkbox-' + i + '">'+ resultado[i].NroOrdenCompra + ' - ' + resultado[i].NombreCliente +'</label> ');
-					else {						 
-						$("#listProgramacionDAD").append('<input data-pedido="' + resultado[i].IDPedido +  '" type="checkbox" name="checkbox-' + i + '" id="checkbox-' + i + '"><label for="checkbox-' + i + '">'+ resultado[i].NroOrdenCompra + ' - ' + resultado[i].NombreCliente +'</label> ');								 
-					}
-					
-						$("#listProgramacionDAD input").checkboxradio().checkboxradio("refresh");
-						
-					}
-					
+					var html = "<table cellpadding='0' cellspacing='0' width='100%'>";
+					html += "<tr><td colspan='2' class='titulo'>Placa Nro:  " + resultado[i].PLACA +  "</td></tr>";
+					html += "<tr><td colspan='2'><b>Conductor: </b>" +  resultado[i].NOMBRES + " "  + resultado[i].APELLIDOS +  "</td></tr>";
+					html += "<tr><td><b>Contenedor Nro:</b> " + resultado[i].Seg_contenedor +  "</td><td><b>Nro Viaje:</b> " + resultado[i].Seg_Secuencia +  "</td></tr>";
+					html += "</table>";
+					$("#listTransporte").append('<li><a data-ajax="false" href="detalle.html?codigo='+ resultado[i].Cod_seg_op +'&puerto='+$.QueryString["puerto"] +'">  ' + html +  '</a></li> ');						
+					 
 				}
-				//$( "#listProgramacion" ).listview( "refresh" );
-				//$( "#listProgramacionDAD" ).listview( "refresh" );
+					 
+					
+				 
+				 $( "#listTransporte" ).listview( "refresh" );  
 			}
-			else{
-				$("#contentProgramaciones #divTABS").fadeOut("fast", function(){
-					$("#contentProgramaciones").append("<h3>No se encontraron programaci&oacute;nes para el dia de hoy</h3>").hide().fadeIn("fast");
-				});
-				//$("#contentProgramaciones").find("h3").remove();
+			else{				 
+					$("#panelSeguimiento").append("<h3>No hay información para el dia de hoy</h3>").hide().fadeIn("fast");		 
+			 
 				
 			}
         },

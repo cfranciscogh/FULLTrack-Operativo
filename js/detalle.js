@@ -1,452 +1,182 @@
 // JavaScript Document
-var  latitude = "";
-var longitude = "";
-function onSuccess(position) {
-   latitude = position.coords.latitude;
-   longitude = position.coords.longitude;
-}
 
-// onError Callback receives a PositionError object
-//
-function onError(error) {
-    console.log('code: '    + error.code    + '\n' + 'message: ' + error.message + '\n');
-}
 
-//document.addEventListener("deviceready", onDeviceReady, false);
-var watchID = null;
+	
+$(document).ready(function(e) {  
 
-$(	document).ready(function(e) {
-    
- 
- 
- 
- $("#registrarIncidencia").click(function(e) {
-        e.preventDefault();
-		
-		if ( latitude == "" ||  longitude == ""){
-			//alert("Ingrese DNI");
-			alerta("No se puede obtener información de ubicación, revise si su GPS se encuentra activo o tenga cobertura de red");
-			return;
-			}
-			
-			
-		if ( $("#hora").val() == "" ){
-			//alert("Ingrese Tiempo Aprox. de llegada");
-			alerta("Ingrese Tiempo Aprox. de llegada");
-			$("#hora").focus();
-			return;
-		}
-		
-		if ( $("#recepcionado").val() == 1 ){
-			
-			if ( $("#nombre").val() == "" ){
-			//alert("Ingrese Nombre");
-			alerta("Ingrese Nombre");
-			$("#nombre").focus();
-			return;
-			}
-			
-			if ( $("#dni").val() == "" ){
-			//alert("Ingrese DNI");
-			alerta("Ingrese DNI");
-			$("#dni").focus();
-			return;
-			}
-			
-			if ( latitude == null ||  longitude == null){
-			//alert("Ingrese DNI");
-			alerta("No se puede obtener información de su ubicación, revise si su GPS se encuentra activo o que se encuentre dentro de red de cobertura");
-			return;
-			}
-			
-			
-			
-		}
-		
-		
-		if ( $("input[name*=tipoIncidencia]:checked").val() ==  null ){			 
-				alerta("Seleccionar incidencia");
-				$("input[name*=tipoIncidencia").focus();
-				return;
-		
-		}
-		
-		
-	var parametros = new Object();
-	parametros.IDTranking = $("#IDTranking").val();	
-	parametros.IDPedido = $("#IDPedido").val();	
-	parametros.TiempoAproxLlegada = $("#hora").val();	
-	parametros.Recepcionado = $("#recepcionado").val();	
-	parametros.Nombre = $("#nombre").val();	
-	parametros.DNI = $("#dni").val();	
-	parametros.IDEstado = $("#estado").val();	
-	parametros.Observacion = $("#detalle").val();	
-	parametros.Latitud = latitude;	
-	parametros.Longitud = longitude;	
-	parametros.Incidencia = $("input[name*=tipoIncidencia]:checked").val();	 
-	parametros.FlagMail = 0;
-	//console.log(parametros);
-	//return;
-		
-	$.mobile.loading('show'); 
-	$.ajax({
-        url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Sodimac/Pedido/WSPedido.asmx/GenerarTraking",
-        type: "POST",
-		//crossDomain: true,
-        dataType : "json",
-        data : JSON.stringify(parametros),
-		contentType: "application/json; charset=utf-8",
-        success : function(data, textStatus, jqXHR) {
-			resultado = $.parseJSON(data.d);
-			$.mobile.loading('hide');
-			 if ( resultado.code == 1){
-				 $("#myPopup").popup("close");
-				 $("#detalle").val("");
-				 $("input[name*=tipoIncidencia]").removeAttr("checked");
-				 //$("#IDTranking").val(resultado.codigo);	
-				 //setTracking($("#IDPedido").val());
-			 }			 
-			 //alert(resultado.message);
-			 alerta(resultado.message);
-			 
-        },
-
-        error : function(jqxhr) 
-        {
-		  console.log(jqxhr);	
-          alerta('Error de conexi\u00f3n, contactese con sistemas!');
+			  
+	
+	getTransportes( $.QueryString["codigo"] );
+	
+	 $("form").keypress(function(e) {
+        if (e.which == 13) {
+            return false;
         }
-
-    });		
-		
-		//
-		
-		
     });
 	
+	$("#agregarDatos").click(function(e) {
+		 
+		 e.preventDefault();
+		
+		if (  $(".autocompletePlaca").parent().find("input").eq(0).val() == "" ){
+			alerta("Ingresar Placa");
+			$(".autocompletePlaca").parent().find("input").eq(0).focus();
+		}
+		else if (  $(".autocompleteConductor").parent().find("input").eq(0).val() == "" ){
+			alerta("Ingresar Conductor");
+			$(".autocompleteConductor").parent().find("input").eq(0).focus();
+		}
+		else{
+			var strPlaca = $(".autocompletePlaca").parent().find("input").eq(0).val();		 
+			var idPlaca =  $(".autocompletePlaca").parent().find("input").eq(1).val();
+			var strConductor =   $(".autocompleteConductor").parent().find("input").eq(0).val();
+			var idConductor =  $(".autocompleteConductor").parent().find("input").eq(1).val();
+			var strCTN = "";
+			
+			$.mobile.loading('show');
+			var html = "<table cellpadding='0' cellspacing='0' width='100%'>";
+			 html += "<tr><td colspan='2' class='titulo'>Placa Nro: " + strPlaca +  "</td></tr>";
+			  html += "<tr><td colspan='2'><b>Conductor: </b>" + strConductor +  "</td></tr>";
+			   html += "<tr><td><b>Contenedor Nro: </b>" + strCTN +  "</td><td><b>Nro Viaje:</b> 1</td></tr>";
+			html += "</table>";
+			
+			$("#listTransporte").append('<li><a data-ajax="false" href="detalle.html?codigo='+ 0 +'&puerto='+$.QueryString["puerto"] +'">  ' + html +  '</a></li> ');
+			
+			
+			var parametros = new Object();
+			parametros.Seg_cod_unidad = idPlaca;	
+			parametros.Seg_cod_chofer = idConductor;	
+			parametros.Seg_contenedor = "";	
+			parametros.Seg_puerto = $.QueryString["puerto"];	
+			 
 	
+			$.ajax({
+				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/registrarTransporte",
+				type: "POST",
+				dataType : "json",
+				data :JSON.stringify(parametros),
+				contentType: "application/json; charset=utf-8",
+				success : function(data, textStatus, jqXHR) {
+					console.log(data);
+					resultado = $.parseJSON(data.d);
+					$.mobile.loading('hide');
+					// if ( resultado.code == 1){
+						$("#myPopup").popup("close");
+						$( "#listTransporte" ).listview( "refresh" );				
+						$.mobile.loading('hide');		
+					// }	
+				 
+				},	
+				error : function(jqxhr) 
+				{
+				   console.log(jqxhr);	
+				   alerta('Error de conexi\u00f3n, contactese con sistemas!');
+				}			
+			});
+		}
+	});
 	
-	$("input[id*='opcion']").change(function(e) {	 
-		//console.log($("label[for*='" + $(this).attr("id") + "']").find("img").attr("title") );
-        $("#txtIncidencia").html( $("label[for*='" + $(this).attr("id") + "']").find("img").attr("title") );
-    });
-
-	setPedido($.QueryString["IDPedido"]);
-	setTracking($.QueryString["IDPedido"]);
-	$("#IDPedido").val($.QueryString["IDPedido"]);
-	$("#regresarPanel").attr("href","panel.html?idChofer=" + $.QueryString["idChofer"] + "&empresa=" + $.QueryString["empresa"]);
-	
-	if ($.QueryString["empresa"] == "SODIMA"){
-		$("#tituloEmpresa").html("SODIMAC");
-	}
-	if ($.QueryString["empresa"] == "MAESTR"){
-		$("#tituloEmpresa").html("MAESTRO");
-	}//tituloEmpresa
-	
-	watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 30000 });
 	 
-	
-	$("#guardarTracking").click(function(e) {
-        e.preventDefault();
-		
-		if ( latitude == "" ||  longitude == ""){
-			//alert("Ingrese DNI");
-			alerta("No se puede obtener información de ubicación, revise si su GPS se encuentra activo o tenga cobertura de red");
-			return;
-			}
-			
-			
-		if ( $("#hora").val() == "" ){
-			//alert("Ingrese Tiempo Aprox. de llegada");
-			alerta("Ingrese Tiempo Aprox. de llegada");
-			$("#hora").focus();
-			return;
-		}
-		
-		if ( $("#recepcionado").val() == 1 ){
-			
-			if ( $("#nombre").val() == "" ){
-			//alert("Ingrese Nombre");
-			alerta("Ingrese Nombre");
-			$("#nombre").focus();
-			return;
-			}
-			
-			if ( $("#dni").val() == "" ){
-			//alert("Ingrese DNI");
-			alerta("Ingrese DNI");
-			$("#dni").focus();
-			return;
-			}
-			
-			if ( latitude == null ||  longitude == null){
-			//alert("Ingrese DNI");
-			alerta("No se puede obtener información de su ubicación, revise si su GPS se encuentra activo o que se encuentre dentro de red de cobertura");
-			return;
-			}
-			
-			
-			
-		}
-		
-		
-		if ( $("#estado").val() == "5" ){
-			if ( $("#incidencia").val() == "0" ){
-				alerta("Seleccionar incidencia");
-				$("#incidencia").focus();
-				return;
-			}
-		}
-		
-		
-	var parametros = new Object();
-	parametros.IDTranking = $("#IDTranking").val();	
-	parametros.IDPedido = $("#IDPedido").val();	
-	parametros.TiempoAproxLlegada = $("#hora").val();	
-	parametros.Recepcionado = $("#recepcionado").val();	
-	parametros.Nombre = $("#nombre").val();	
-	parametros.DNI = $("#dni").val();	
-	parametros.IDEstado = $("#estado").val();	
-	parametros.Observacion = $("#observacion").val();	
-	parametros.Latitud = latitude;	
-	parametros.Longitud = longitude;	
-	parametros.Incidencia = $("#incidencia").val();	 
-	parametros.FlagMail = 1;
-	//console.log(parametros);
-	//return;
-		
-	$.mobile.loading('show'); 
-	$.ajax({
-        url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Sodimac/Pedido/WSPedido.asmx/GenerarTraking",
-        type: "POST",
-		//crossDomain: true,
-        dataType : "json",
-        data : JSON.stringify(parametros),
-		contentType: "application/json; charset=utf-8",
-        success : function(data, textStatus, jqXHR) {
-			resultado = $.parseJSON(data.d);
-			$.mobile.loading('hide');
-			 alerta(resultado.message);
-			 
-			 if ( resultado.code == 1){
-				  //location.href =  $("#regresarPanel").attr("href");
-			 		//$("#regresarPanel").click();
-			 
-				 $("#IDTranking").val(resultado.codigo);	
-				 setTracking($("#IDPedido").val());
-			 }			 
-			 //alert(resultado.message);
-			
-			
-        },
-
-        error : function(jqxhr) 
-        {
-		  console.log(jqxhr);	
-          alerta('Error de conexi\u00f3n, contactese con sistemas!');
-        }
-
-    });		
-		
-		//
-		
+	$("#btnConfirmar").click(function(e) {        
 		
     });
 	
-//};
-
+	$("#btnRegresar").attr("href","transporte.html?puerto=" + $.QueryString["puerto"] );	 
+	
 });
 
-
-
-function HabilitarIncidencia(control){
+function actualizarChofer(IDPedido,IDChofer){
 	
- if ( $(control).val() == 5 ){
-	 $("#DIVIncidencia").show();
- }
- else{
- 	$("#DIVIncidencia").hide();
- } 
- 
-  if ( $(control).val() == 4 ){
-	$(" #btnIncidencia").show("fast");
- }
- else{
-	$(" #btnIncidencia").hide("fast");
- } 
- 
-
-}
-
-
-function setTracking(idPedido){
-	
-	$.mobile.loading('show'); 
-	$.ajax({
-        url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Sodimac/Pedido/WSPedido.asmx/ObtenerTraking",
-        type: "POST",
-		cache: false,
-		//crossDomain: true,
-        dataType : "json",
-        data : '{"IDPedido":"'+idPedido+'"}',
-		contentType: "application/json; charset=utf-8",
-        success : function(data, textStatus, jqXHR) {
-			//console.log(data.d);
-			resultado = $.parseJSON(data.d);
-			$.mobile.loading('hide');
-			 
-			if ( resultado.length > 0 ){
-				
-				for (var i = 0; i<resultado.length;i++){					
-					//$(".titulo").val(resultado[i].IDTraking);
-					$("#IDTranking").val(resultado[i].IDTraking);
-					$("#IDPedido").val(resultado[i].IDPedido);
-					$("#observacion").val(resultado[i].Observacion.trim());
-					if (resultado[i].Recepcionado){
-						$("#recepcionado").val(1);
-						$("#recepcionado").slider('refresh');
-						$(".contentDatos").slideDown("fast");
-						$("#nombre").val(resultado[i].Nombre.trim());
-						$("#dni").val(resultado[i].DNI.trim());
+	$.mobile.loading('show');
+			$.ajax({
+				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Sodimac/Pedido/WSPedido.asmx/actualizarChofer",
+				type: "POST",
+				//crossDomain: true,
+				dataType : "json",
+				data : '{"IDPedido":"' + IDPedido + '","IDChofer":"' + IDChofer + '"}',
+				//contentType: "xml",
+				contentType: "application/json; charset=utf-8",
+				success : function(data, textStatus, jqXHR) {
+				resultado = $.parseJSON(data.d);
+					//console.log(resultado);
+					$.mobile.loading('hide');
+					if ( resultado == 1  ){
+						alerta('OC agregada con exito.');
+						$("#myPopup").popup("close");
+						getProgramaciones();
 					}
-					HabilitarIncidencia($("#estado"));
-					$("#estado").html("");
-					$("#estado").append("<option selected value='"+resultado[i].IDEstado+"'>"+resultado[i].Estado+"</option>");
-					if ( resultado[i].IDEstado == 4 ) {
-						 $("#btnIncidencia").fadeIn("fast");					 
-						$("#estado").append("<option value='5'>NO ENTREGADO</option>");
-						//$("#estado").append("<option value='5'>PENDIENTE DE ENTREGA</option>");
-					}
-					 
-					
-					if ( resultado[i].IDEstado > 3 ) {
-						$("#DIVEstado").fadeIn("fast");
-						$("#DIVRecepcionado").fadeIn("fast");
-						$("#hora").val(resultado[i].TiempoAproxLlegadaFormat);
-					}
-					
-					$("#estado").selectmenu( "refresh" )		
-					break;
-				}
-			}
-			else{
-			}
-        },
-
-        error : function(jqxhr) 
-        {	
-          alerta('Error de conexi\u00f3n, contactese con sistemas!');
-        }
-
-    });		 
+				},	
+				error : function(jqxhr) 
+				{
+				   console.log(jqxhr);	
+				   alerta('Error de conexi\u00f3n, contactese con sistemas!');
+				}			
+			});
 	
 }
 
-
-
-
-
-
-function valirRecepcion(ctrlSelect){
-	$(".contentDatos").slideUp("fast");
-	if ( $(ctrlSelect).val() == 1 )
-		$(".contentDatos").slideDown("fast");
-}
 
 function alertDismissed(){
 }
 //
 
-function setPedido(idPedido){
+function getTransportes(codigo){
 	
-	$.mobile.loading('show'); 
+	
+	
+	$.mobile.loading('show');
+	//alert($.QueryString["idChofer"]);   
+	$("#listTransporte").html("");  
+	//alert(codigo);
 	$.ajax({
-        url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Sodimac/Pedido/WSPedido.asmx/ObtenerPedido",
+        url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/ConsultarTransportes",
         type: "POST",
 		//crossDomain: true,
         dataType : "json",
-        data : '{"IDPedido":"'+idPedido+'"}',
+        data : '{"IDSeguimiento":"'+ codigo +'", "Puerto":"'+$.QueryString["puerto"]+'"}',
+        //contentType: "xml",
 		contentType: "application/json; charset=utf-8",
         success : function(data, textStatus, jqXHR) {
 		resultado = $.parseJSON(data.d);
-			$.mobile.loading('hide');
-			if ( resultado.length > 0 ){
-				
-				for (var i = 0; i<resultado.length;i++){
-					$(".oc").html(resultado[i].NroOrdenCompra);
-					$(".titulo").html(resultado[i].NroOrdenCompra);
-		 		 	$(".cliente").html(resultado[i].NombreCliente);
-					$(".dni").html(resultado[i].DocumentoCliente);
-					$(".blt").html(resultado[i].BLT_FME);
-					$(".fch_entrega").html(resultado[i].FechaEntregaFormat);
-					$(".provincia").html(resultado[i].NomProvincia);
-					$(".distrito").html(resultado[i].NomDistrito);
-					$(".direccion").html(resultado[i].DireccionEntrega);
-					$(".referencia").html(resultado[i].Referencia);
-					$(".telefono").html(resultado[i].Telefono);
-					$(".mail").html(resultado[i].Email);
-					$(".observacion").html(resultado[i].Observacion);					
-					setDetallePedido(idPedido);					
-					break;
-				}
-				//$( "#listProgramacion" ).listview( "refresh" );
-			}
-			else{
-				//$("#contentProgramaciones").html("");
-//				$("#contentProgramaciones").html("<h3>No se encontraron programaci&oacute;nes para el dia de hoy</h3>");
-//				//Mensaje
-			}
-        },
-
-        error : function(jqxhr) 
-        {
-		   //console.log(jqxhr);	
-          alerta('Error de conexi\u00f3n, contactese con sistemas!');
-        }
-
-    });		 
-	
-}
-
-
-
-
-
-function setDetallePedido(idPedido){
-	
-	$.mobile.loading('show'); 
-	$.ajax({
-        url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Sodimac/Pedido/WSPedido.asmx/ObtenerDetallePedido",
-        type: "POST",
-		//crossDomain: true,
-        dataType : "json",
-        data : '{"IDPedido":"'+idPedido+'"}',
-		contentType: "application/json; charset=utf-8",
-        success : function(data, textStatus, jqXHR) {
-			resultado = $.parseJSON(data.d);
+		
 			//console.log(resultado);
 			$.mobile.loading('hide');
-			if ( resultado.length > 0 ){				
-				for (var i = 0; i<resultado.length;i++){
-					$(".contentDetalle").append("<p><b>"+resultado[i].Descripcion+"</b><br><b>Tipo: </b>"+resultado[i].Tipo+"<br><b>SKU: </b>"+resultado[i].SKU+"<br><b>Cantidad: </b>"+resultado[i].Cantidad+"</p>");				 
+			if ( resultado.length > 0 ){
+				$("#panelSeguimiento").find("h3").remove();
+			 
+				var count = 0;
+				for (var i = 0; i<resultado.length;i++){					
+					
+					var html = "<table cellpadding='0' cellspacing='0' width='100%'>";
+					html += "<tr><td colspan='2' class='titulo'>Placa Nro:  " + resultado[i].PLACA +  "</td></tr>";
+					html += "<tr><td colspan='2'><b>Conductor: </b>" +  resultado[i].NOMBRES + " "  + resultado[i].APELLIDOS +  "</td></tr>";
+					html += "<tr><td><b>Contenedor Nro:</b> " + resultado[i].Seg_contenedor +  "</td><td><b>Nro Viaje:</b> " + resultado[i].Seg_Secuencia +  "</td></tr>";
+					html += "</table>";
+					$("#listTransporte").append('<li><a>  ' + html +  '</a></li> ');						
+					 
 				}
+					 
+					
+				 
+				 $( "#listTransporte" ).listview( "refresh" );  
 			}
-			else{
-				$("#contentProgramaciones").html("");
-				$("#contentProgramaciones").html("<h3>No se encontro informaci&oacute;n</h3>");
-//				//Mensaje
+			else{				 
+					$("#panelSeguimiento").append("<h3>No hay información para el dia de hoy</h3>").hide().fadeIn("fast");		 
+			 
+				
 			}
         },
 
         error : function(jqxhr) 
         {
 		   //console.log(jqxhr);	
-		   alerta('Error de conexi\u00f3n, contactese con sistemas!');
+           alerta('Error de conexi\u00f3n, contactese con sistemas!');
         }
 
     });		 
 	
 }
+
 
 function alerta(mensaje){
 	alert(mensaje);
@@ -458,8 +188,4 @@ function alerta(mensaje){
             'Aceptar'                  // buttonName
         	);
 	
-}
-
-
-function alertDismissed(){
 }
