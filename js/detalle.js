@@ -78,6 +78,40 @@ $(document).ready(function(e) {
 	
 	 
 	$("#btnConfirmar").click(function(e) {        
+		e.preventDefault();
+		
+		var parametros = new Object();
+		parametros.Cod_seg_op = $.QueryString["codigo"];	
+		parametros.Seg_contenedor = "";	
+		parametros.Seg_T1LL = $("#hora1").val();
+		parametros.Seg_T1IN = $("#hora2").val();
+		parametros.Seg_T1SA = $("#hora3").val();
+		parametros.Seg_D1LL = $("#hora4").val();	
+		parametros.Seg_D1IN = $("#hora5").val();
+		parametros.Seg_D1SA = $("#hora6").val();
+		console.log(parametros);
+		$.ajax({
+				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/actualizarTransporte",
+				type: "POST",
+				dataType : "json",
+				data :JSON.stringify(parametros),
+				contentType: "application/json; charset=utf-8",
+				success : function(data, textStatus, jqXHR) {
+					console.log(data);
+					resultado = $.parseJSON(data.d);
+					$.mobile.loading('hide');
+					if ( resultado.code == 1){
+						 
+					 }			  
+					 alerta(resultado.message);
+				 
+				},	
+				error : function(jqxhr) 
+				{
+				   console.log(jqxhr);	
+				   alerta('Error de conexi\u00f3n, contactese con sistemas!');
+				}			
+			});	
 		
     });
 	
@@ -152,9 +186,18 @@ function getTransportes(codigo){
 					html += "<tr><td colspan='2'><b>Conductor: </b>" +  resultado[i].NOMBRES + " "  + resultado[i].APELLIDOS +  "</td></tr>";
 					html += "<tr><td><b>Contenedor Nro:</b> " + resultado[i].Seg_contenedor +  "</td><td><b>Nro Viaje:</b> " + resultado[i].Seg_Secuencia +  "</td></tr>";
 					html += "</table>";
-					$("#listTransporte").append('<li><a>  ' + html +  '</a></li> ');						
+					$("#listTransporte").append('<li><a>  ' + html +  '</a></li> ');	
+					
+					$("#hora1").val(resultado[i].Hora_T1LL);	
+					$("#hora2").val(resultado[i].Hora_T1IN);	
+					$("#hora3").val(resultado[i].Hora_T1SA);	
+					$("#hora4").val(resultado[i].Hora_D1LL);	
+					$("#hora5").val(resultado[i].Hora_D1IN);	
+					$("#hora6").val(resultado[i].Hora_D1SA);					
 					 
 				}
+				
+				
 					 
 					
 				 

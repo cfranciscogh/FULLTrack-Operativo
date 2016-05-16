@@ -21,7 +21,7 @@ $(document).ready(function(e) {
 			if ( value && value.length > 2 ) {
 			
 			$('.autocompletePlaca').show();           
-			$ul.html( "<li><div class='ui-loader'><span class='ui-icon ui-icon-loading' >Buscando...</span></div></li>" );
+			$ul.html( "<li><div class='ui-loader'><span class='ui-li-static ui-body-inherit ui-icon ui-icon-loading' >Buscando...</span></div></li>" );
 			$ul.listview("refresh");
 			dropdownContent = "";
 			
@@ -36,7 +36,7 @@ $(document).ready(function(e) {
 					//console.log(resultado);	
 					if ( resultado.length > 0 ){					
 						for (var i = 0; i<resultado.length;i++){					
-							$(".autocompletePlaca").append("<li id='" + resultado[i].CODIGO + "'>" + resultado[i].PLACA + "</li>");	
+							$(".autocompletePlaca").append("<li class='ui-li-static ui-body-inherit' id='" + resultado[i].CODIGO + "'>" + resultado[i].PLACA + "</li>");	
 						}						
 					}
 					
@@ -85,10 +85,9 @@ $(document).ready(function(e) {
 					//console.log(resultado);	
 					if ( resultado.length > 0 ){					
 						for (var i = 0; i<resultado.length;i++){					
-							$(".autocompleteConductor").append("<li id='" + resultado[i].CODIGO + "'>" + resultado[i].APELLIDOS + " " + resultado[i].NOMBRES + "</li>");	
+							$(".autocompleteConductor").append("<li class='ui-li-static ui-body-inherit' id='" + resultado[i].CODIGO + "'> " + resultado[i].APELLIDOS + " " + resultado[i].NOMBRES + " </li>");	
 						}						
-					}
-					
+					}					
 				},
 		
 				error : function(jqxhr) 
@@ -162,8 +161,10 @@ $(document).ready(function(e) {
 					$.mobile.loading('hide');
 					// if ( resultado.code == 1){
 						$("#myPopup").popup("close");
-						$( "#listTransporte" ).listview( "refresh" );				
-						$.mobile.loading('hide');		
+						getTransportes();
+						//$( "#listTransporte" ).listview( "refresh" );				
+						$.mobile.loading('hide');	
+						$("#panelSeguimiento h3").remove();	
 					// }	
 				 
 				},	
