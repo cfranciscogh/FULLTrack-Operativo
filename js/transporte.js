@@ -130,6 +130,14 @@ $(document).ready(function(e) {
 			var idPlaca =  $(".autocompletePlaca").parent().find("input").eq(1).val();
 			var strConductor =   $(".autocompleteConductor").parent().find("input").eq(0).val();
 			var idConductor =  $(".autocompleteConductor").parent().find("input").eq(1).val();
+			
+			
+			if ( idPlaca == "" || idConductor == "" ){
+				alerta("Ingresar datos correctos");
+				return;
+			}
+			
+			
 			var strCTN = "";
 			
 			$.mobile.loading('show');
@@ -194,7 +202,7 @@ $(document).ready(function(e) {
 	//$("#regresarEmpresa").attr("href","empresa.html?idChofer=" + $.QueryString["idChofer"]);
 	//$("#irTracking").attr("href","panel.html?idChofer=" + $.QueryString["idChofer"] +'&empresa='+ $.QueryString["empresa"] );
 	
-	 
+	$("#btnConfig").attr("href","configuracion.html?puerto=" + $.QueryString["puerto"] );	  
 	
 });
 

@@ -1,0 +1,115 @@
+<!DOCTYPE>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+	<link rel="stylesheet" href="plugin/mobile/jquery.mobile-1.4.5.min.css">
+	<link rel="stylesheet" href="plugin/mobile/demos/_assets/css/jqm-demos.css">
+	<script src="plugin/mobile/demos/js/jquery.js"></script>
+	<script src="plugin/mobile/demos/_assets/js/index.js"></script>
+	<script src="plugin/mobile/jquery.mobile-1.4.5.min.js"></script>
+     <script type="text/javascript" charset="utf-8" src="cordova.js"></script>  
+     <script src="js/funciones.js"></script>
+    <script type="text/javascript" src="js/config.js"></script>
+        <style type="text/css">
+	
+	.ui-li-static:hover{
+		background-color:#123456;
+		color:white;
+	}
+	.ui-input-search{
+		border:none;
+	}	
+	
+	.listview li a{
+		background-color:white;
+		padding:0px;
+	}
+	.listview li a a{
+		background-color:#989696 !important;
+		 border-color:#ddd !important;
+	}
+	
+	
+	.listview li a table td{
+		padding:4px 8px;
+	}
+	
+	.listview li a table td.titulo{
+		background-color:#989696;
+		color:white;
+		padding:6px 8px;
+	}
+	.ui-listview .ui-btn-icon-notext:after,
+	.ui-listview .ui-btn-icon-left:after, 
+	.ui-listview .ui-btn-icon-right:after{
+		top:14px;
+		background-color:rgba(0,0,0,0);
+		right:5px;
+	}
+	
+	.ui-input-text{
+		margin:0px !important;
+	}
+	</style>
+<title>OPERATIVO</title>
+</head>
+
+<body>
+
+
+
+<div data-role="page">
+
+	<div class="bgBlue" style="padding:15px 0;" data-role="header" data-theme="b">
+		<h1>RASTREO & SEGUIMIENTO</h1>
+	</div><!-- /header -->
+	<div style="height:0px; padding:0px; background-color:white;" class="buscador">
+        
+        </div>
+	<div   role="main" class="ui-content">
+    
+
+		<table cellpadding='5' cellspacing='0' width='100%'> 
+			<tr><td style="text-align:center;" class='titulo'>Configurar CTN -  Año | Nro Manifiesto</td></tr>
+			<tr><td><b>Año:</b> </td></tr>
+            <tr><td><input type="text" name="anno" id="anno" /></td></tr>
+           <tr><td><b>Numero de Manifiesto:</b> </td><tr>
+           <tr><td><input type="text" name="numero" id="numero" /></td></tr>
+       
+		</table>
+        
+		<div class="panelCTN">
+            <ul class="listview" id="listTransporte" data-role="listview" data-text="" data-filter="true" data-inset="true">
+            </ul>
+        </div>			
+   
+        
+       
+        
+        
+        
+	</div><!-- /content -->
+
+	 
+    
+    
+    
+    <div data-role="footer" data-position="fixed">
+		<div data-role="navbar" data-iconpos="top">
+		<ul>
+			<li><a id="btnConfirmar" data-icon="check">Confirmar</a></li>	       
+			<li><a id="btnRegresar" href="transporte.html" data-ajax="false" data-icon="back">Regresar</a></li>
+		</ul>
+	</div><!-- /navbar -->
+	</div>
+    
+    
+    
+</div><!-- /page -->
+
+
+</body>
+</html>

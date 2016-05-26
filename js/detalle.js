@@ -1,11 +1,63 @@
 // JavaScript Document
-
+$( document).on( "click", ".autocomplete li", function() {      
+      var selectedItem = $(this).html();
+	  var selectedValue = $(this).attr("id");
+	  //alert(selectedItem);
+      $(this).parent().parent().find('input').val(selectedItem); 
+	  $(this).parent().parent().find('input[type="hidden"]').val(selectedValue);   
+      $('.autocomplete').hide();     
+    });
 
 	
 $(document).ready(function(e) {  
 
 			  
-	
+	$( ".autocompleteContenedor" ).on( "listviewbeforefilter", function ( e, data ) {        
+			var $ul = $(this);                        // $ul refers to the shell unordered list under the input box
+			var value = $( data.input ).val();        // this is value of what user entered in input box
+			var dropdownContent = "" ;                // we use this value to collect the content of the dropdown
+			$ul.html("") ;                            // clears value of set the html content of unordered list
+			
+			// on third character, trigger the drop-down
+			if ( value && value.length > 2 ) {
+			
+			$('.autocompleteContenedor').show();           
+			$ul.html( "<li><div class='ui-loader'><span class='ui-li-static ui-body-inherit ui-icon ui-icon-loading' >Buscando...</span></div></li>" );
+			$ul.listview("refresh");
+			dropdownContent = "";
+			
+			$.ajax({
+				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/consultarContenedores",
+				type: "POST",
+				dataType : "json",
+				data : '{"IDConfig" : 0, "NroContenedor":"'+ value +'"}',
+				contentType: "application/json; charset=utf-8",
+				success : function(data, textStatus, jqXHR) {
+					resultado = $.parseJSON(data.d);
+					//console.log(resultado);	
+					if ( resultado.length > 0 ){					
+						for (var i = 0; i<resultado.length;i++){					
+							$(".autocompleteContenedor").append("<li class='ui-li-static ui-body-inherit' id='" + resultado[i].IDCOntenedor + "'>" + resultado[i].NroContenedor + "</li>");	
+						}						
+					}
+					
+				},
+		
+				error : function(jqxhr) 
+				{
+				   //console.log(jqxhr);	
+				   alerta('Error de conexi\u00f3n, contactese con sistemas!');
+				}	
+			});	
+			
+			$ul.listview("refresh");
+			$ul.trigger( "updatelayout");  
+			
+        	}
+      });
+	  
+	  
+	  
 	getTransportes( $.QueryString["codigo"] );
 	
 	 $("form").keypress(function(e) {
@@ -14,44 +66,32 @@ $(document).ready(function(e) {
         }
     });
 	
-	$("#agregarDatos").click(function(e) {
+	
+	$("#agregarCTN").click(function(e) {
 		 
 		 e.preventDefault();
 		
-		if (  $(".autocompletePlaca").parent().find("input").eq(0).val() == "" ){
-			alerta("Ingresar Placa");
-			$(".autocompletePlaca").parent().find("input").eq(0).focus();
-		}
-		else if (  $(".autocompleteConductor").parent().find("input").eq(0).val() == "" ){
-			alerta("Ingresar Conductor");
-			$(".autocompleteConductor").parent().find("input").eq(0).focus();
+		if (  $(".autocompleteContenedor").parent().find("input").eq(0).val() == "" ){
+			alerta("Ingresar Contenedor");
+			$(".autocompleteContenedor").parent().find("input").eq(0).focus();
 		}
 		else{
-			var strPlaca = $(".autocompletePlaca").parent().find("input").eq(0).val();		 
-			var idPlaca =  $(".autocompletePlaca").parent().find("input").eq(1).val();
-			var strConductor =   $(".autocompleteConductor").parent().find("input").eq(0).val();
-			var idConductor =  $(".autocompleteConductor").parent().find("input").eq(1).val();
-			var strCTN = "";
-			
-			$.mobile.loading('show');
-			var html = "<table cellpadding='0' cellspacing='0' width='100%'>";
-			 html += "<tr><td colspan='2' class='titulo'>Placa Nro: " + strPlaca +  "</td></tr>";
-			  html += "<tr><td colspan='2'><b>Conductor: </b>" + strConductor +  "</td></tr>";
-			   html += "<tr><td><b>Contenedor Nro: </b>" + strCTN +  "</td><td><b>Nro Viaje:</b> 1</td></tr>";
-			html += "</table>";
-			
-			$("#listTransporte").append('<li><a data-ajax="false" href="detalle.html?codigo='+ 0 +'&puerto='+$.QueryString["puerto"] +'">  ' + html +  '</a></li> ');
+			var strContenedor = $(".autocompleteContenedor").parent().find("input").eq(0).val();		 
+			var idContenedor =  $(".autocompleteContenedor").parent().find("input").eq(1).val();
 			
 			
-			var parametros = new Object();
-			parametros.Seg_cod_unidad = idPlaca;	
-			parametros.Seg_cod_chofer = idConductor;	
-			parametros.Seg_contenedor = "";	
-			parametros.Seg_puerto = $.QueryString["puerto"];	
+			if ( idContenedor == "" || strContenedor == "" ){
+				alerta("Ingresar datos correctos");
+				return;
+			}
 			 
-	
-			$.ajax({
-				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/registrarTransporte",
+			
+			$.mobile.loading('show');			
+			var parametros = new Object();
+			parametros.Cod_seg_op = $.QueryString["codigo"];	
+			parametros.Seg_contenedor = strContenedor;	
+		 	$.ajax({
+				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/actualizarTransporte_CTN",
 				type: "POST",
 				dataType : "json",
 				data :JSON.stringify(parametros),
@@ -60,11 +100,14 @@ $(document).ready(function(e) {
 					console.log(data);
 					resultado = $.parseJSON(data.d);
 					$.mobile.loading('hide');
-					// if ( resultado.code == 1){
+					if ( resultado.code == 1){
+						$(".autocompleteContenedor").parent().find("input").eq(0).val("");		 
+	    				$(".autocompleteContenedor").parent().find("input").eq(1).val("");
+						$(".autocompleteContenedor").html("");
 						$("#myPopup").popup("close");
-						$( "#listTransporte" ).listview( "refresh" );				
-						$.mobile.loading('hide');		
-					// }	
+						 getTransportes( $.QueryString["codigo"] );
+					 }			  
+					 alerta(resultado.message);
 				 
 				},	
 				error : function(jqxhr) 
@@ -72,9 +115,16 @@ $(document).ready(function(e) {
 				   console.log(jqxhr);	
 				   alerta('Error de conexi\u00f3n, contactese con sistemas!');
 				}			
-			});
+			});	
+			 
+	
+			 
 		}
+		
 	});
+	
+	
+	
 	
 	 
 	$("#btnConfirmar").click(function(e) {        
@@ -89,7 +139,7 @@ $(document).ready(function(e) {
 		parametros.Seg_D1LL = $("#hora4").val();	
 		parametros.Seg_D1IN = $("#hora5").val();
 		parametros.Seg_D1SA = $("#hora6").val();
-		console.log(parametros);
+		//console.log(parametros);
 		$.ajax({
 				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/actualizarTransporte",
 				type: "POST",
@@ -97,7 +147,7 @@ $(document).ready(function(e) {
 				data :JSON.stringify(parametros),
 				contentType: "application/json; charset=utf-8",
 				success : function(data, textStatus, jqXHR) {
-					console.log(data);
+					//console.log(data);
 					resultado = $.parseJSON(data.d);
 					$.mobile.loading('hide');
 					if ( resultado.code == 1){
@@ -119,35 +169,6 @@ $(document).ready(function(e) {
 	
 });
 
-function actualizarChofer(IDPedido,IDChofer){
-	
-	$.mobile.loading('show');
-			$.ajax({
-				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Sodimac/Pedido/WSPedido.asmx/actualizarChofer",
-				type: "POST",
-				//crossDomain: true,
-				dataType : "json",
-				data : '{"IDPedido":"' + IDPedido + '","IDChofer":"' + IDChofer + '"}',
-				//contentType: "xml",
-				contentType: "application/json; charset=utf-8",
-				success : function(data, textStatus, jqXHR) {
-				resultado = $.parseJSON(data.d);
-					//console.log(resultado);
-					$.mobile.loading('hide');
-					if ( resultado == 1  ){
-						alerta('OC agregada con exito.');
-						$("#myPopup").popup("close");
-						getProgramaciones();
-					}
-				},	
-				error : function(jqxhr) 
-				{
-				   console.log(jqxhr);	
-				   alerta('Error de conexi\u00f3n, contactese con sistemas!');
-				}			
-			});
-	
-}
 
 
 function alertDismissed(){
@@ -183,9 +204,14 @@ function getTransportes(codigo){
 					
 					var html = "<table cellpadding='0' cellspacing='0' width='100%'>";
 					html += "<tr><td colspan='2' class='titulo'>Placa Nro:  " + resultado[i].PLACA +  "</td></tr>";
-					html += "<tr><td colspan='2'><b>Conductor: </b>" +  resultado[i].NOMBRES + " "  + resultado[i].APELLIDOS +  "</td></tr>";
-					html += "<tr><td><b>Contenedor Nro:</b> " + resultado[i].Seg_contenedor +  "</td><td><b>Nro Viaje:</b> " + resultado[i].Seg_Secuencia +  "</td></tr>";
+					html += "<tr><td style='vertical-align: top;'><b>Conductor: </b></td><td>" +  resultado[i].NOMBRES + " "  + resultado[i].APELLIDOS +  "</td></tr>";
+					html += "<tr><td><b>Nro Viaje:</b></td><td>" + resultado[i].Seg_Secuencia +  "</td></tr>";
+					
+					
+					//html += "<tr><td><b>Contenedor Nro:</b> " + resultado[i].Seg_contenedor +  "</td><td><b>Nro Viaje:</b> " + resultado[i].Seg_Secuencia +  "</td></tr>";
+					
 					html += "</table>";
+					
 					$("#listTransporte").append('<li><a>  ' + html +  '</a></li> ');	
 					
 					$("#hora1").val(resultado[i].Hora_T1LL);	
@@ -193,8 +219,11 @@ function getTransportes(codigo){
 					$("#hora3").val(resultado[i].Hora_T1SA);	
 					$("#hora4").val(resultado[i].Hora_D1LL);	
 					$("#hora5").val(resultado[i].Hora_D1IN);	
-					$("#hora6").val(resultado[i].Hora_D1SA);					
-					 
+					$("#hora6").val(resultado[i].Hora_D1SA);
+					$(".ctn").html(resultado[i].Seg_contenedor);
+					$(".tipo").html(resultado[i].Size + " - " + resultado[i].Tipo);				
+					$(".manifiesto").html( ( resultado[i].anno_manifiesto == 0 ? "" : resultado[i].anno_manifiesto) + " " + resultado[i].nro_manifiesto);	
+					$(".nave").html(resultado[i].nave); 
 				}
 				
 				

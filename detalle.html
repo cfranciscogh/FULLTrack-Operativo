@@ -16,8 +16,7 @@
     <!--<script type='text/javascript' src="js/jqm-datebox.mode.calbox.min.js"></script>   --> 
     <script type='text/javascript' src="js/jqm-datebox.mode.datebox.min.js"></script>    
     <!--<script type='text/javascript' src="js/jqm-datebox.mode.flipbox.min.js"></script>-->
-	<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.es-ES.utf8.js"></script>
-      
+	<script type="text/javascript" src="js/jquery.mobile.datebox.i18n.es-ES.utf8.js"></script>     
       
    
     <script src="js/funciones.js"></script>
@@ -62,7 +61,11 @@
 	.ui-input-text{
 		margin:0px !important;
 	}
+	
+	
+	
 	</style>
+    
 <title>OPERATIVO</title>
 </head>
 
@@ -91,11 +94,11 @@
         <ul class="listview" id="ctnPanel" data-role="listview" data-filter="false" data-inset="true">
         <li><a>
         <table cellpadding='0' cellspacing='0' width='100%'> 
-			<tr><td colspan='2' class='titulo'>Contenedor Nro:  NYK2050372090</td></tr>
-			<tr><td colspan='2'>NIPPON YUSEN KAISHA</td></tr>
-            <tr><td colspan='2'><b>NAVE:</b> NYK LODSTAR / 1901E</td></tr>
-			<tr><td><b>MANIFIESTO:</b> 2016-00503</td><td></td></tr>
-              <tr><td colspan='2'><b>TIPO:</b> GENERAL</td></tr>
+			<tr><td colspan='2' class='titulo'>Contenedor Nro:  <span class="ctn">-</span></td></tr>
+			<!--<tr><td colspan='2'>NIPPON YUSEN KAISHA</td></tr>-->
+            <tr><td colspan='2'><b>NAVE:</b> <span class="nave"></span></td></tr>
+			<tr><td><b>MANIFIESTO:</b> <span class="manifiesto"></span></td><td></td></tr>
+              <tr><td colspan='2'><b>TIPO:</b> <span class="tipo"></span></td></tr>
 		</table></a>
         </li>
         </ul>
@@ -139,10 +142,10 @@
         <form>
         	 <div class="contentInput">
              <label>Contenedor: </label>             
-              <input type="text" name="ctn" id="ctn" value=""  />               
-             <input type="hidden" name="idConductor" id="idConductor" value="" />
+             <ul class="autocomplete autocompleteContenedor"  data-role="listview" data-inset="true" data-filter="true" 
+		  data-filter-placeholder="Buscar" data-filter-theme="d"></ul>
             </div> 
-             
+             <input type="hidden" name="idContenedor" id="idContenedor" value="" />
         </form>
         
     </div><!-- /content -->
