@@ -147,7 +147,7 @@ $(document).ready(function(e) {
 			   html += "<tr><td><b>Contenedor Nro: </b>" + strCTN +  "</td><td><b>Nro Viaje:</b> 1</td></tr>";
 			html += "</table>";
 			
-			$("#listTransporte").append('<li><a data-ajax="false" href="detalle.html?codigo='+ 0 +'&puerto='+$.QueryString["puerto"] +'">  ' + html +  '</a></li> ');
+			//$("#listTransporte").append('<li><a data-ajax="false" href="detalle.html?codigo='+ 0 +'&puerto='+$.QueryString["puerto"] +'">  ' + html +  '</a></li> ');
 			
 			
 			var parametros = new Object();
@@ -165,15 +165,23 @@ $(document).ready(function(e) {
 				contentType: "application/json; charset=utf-8",
 				success : function(data, textStatus, jqXHR) {
 					console.log(data);
+					$.mobile.loading('hide');	
 					resultado = $.parseJSON(data.d);
 					$.mobile.loading('hide');
-					// if ( resultado.code == 1){
+					 if ( resultado.code == 1){
 						$("#myPopup").popup("close");
-						getTransportes();
-						//$( "#listTransporte" ).listview( "refresh" );				
-						$.mobile.loading('hide');	
+						
+						$(".autocompletePlaca").parent().find("input").eq(0).val("");		 
+			  $(".autocompletePlaca").parent().find("input").eq(1).val("");
+			  $(".autocompleteConductor").parent().find("input").eq(0).val("");
+			 $(".autocompleteConductor").parent().find("input").eq(1).val("");
+			
 						$("#panelSeguimiento h3").remove();	
-					// }	
+						getTransportes();
+						//$( "#listTransporte" ).listview( "refresh" );	
+						
+					 }	
+					 alerta(resultado.message);
 				 
 				},	
 				error : function(jqxhr) 

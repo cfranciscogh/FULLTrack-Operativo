@@ -2,7 +2,7 @@
 $( document).on( "click", ".autocomplete li", function() {      
       var selectedItem = $(this).html();
 	  var selectedValue = $(this).attr("id");
-	  //alert(selectedItem);
+	 // alert(selectedValue);
       $(this).parent().parent().find('input').val(selectedItem); 
 	  $(this).parent().parent().find('input[type="hidden"]').val(selectedValue);   
       $('.autocomplete').hide();     
@@ -34,10 +34,10 @@ $(document).ready(function(e) {
 				contentType: "application/json; charset=utf-8",
 				success : function(data, textStatus, jqXHR) {
 					resultado = $.parseJSON(data.d);
-					//console.log(resultado);	
+					console.log(resultado);	
 					if ( resultado.length > 0 ){					
 						for (var i = 0; i<resultado.length;i++){					
-							$(".autocompleteContenedor").append("<li class='ui-li-static ui-body-inherit' id='" + resultado[i].IDCOntenedor + "'>" + resultado[i].NroContenedor + "</li>");	
+							$(".autocompleteContenedor").append("<li class='ui-li-static ui-body-inherit' id='" + resultado[i].IDConfiguracion + "'>" + resultado[i].NroContenedor + "</li>");	
 						}						
 					}
 					
@@ -90,6 +90,8 @@ $(document).ready(function(e) {
 			var parametros = new Object();
 			parametros.Cod_seg_op = $.QueryString["codigo"];	
 			parametros.Seg_contenedor = strContenedor;	
+			parametros.IDConfiguracion = idContenedor;
+			 console.log(parametros);
 		 	$.ajax({
 				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/actualizarTransporte_CTN",
 				type: "POST",
@@ -105,7 +107,7 @@ $(document).ready(function(e) {
 	    				$(".autocompleteContenedor").parent().find("input").eq(1).val("");
 						$(".autocompleteContenedor").html("");
 						$("#myPopup").popup("close");
-						 getTransportes( $.QueryString["codigo"] );
+						 getTransportes($.QueryString["codigo"]);
 					 }			  
 					 alerta(resultado.message);
 				 

@@ -30,7 +30,7 @@ $(document).ready(function(e) {
 				data :JSON.stringify(parametros),
 				contentType: "application/json; charset=utf-8",
 				success : function(data, textStatus, jqXHR) {
-					console.log(data);
+					//console.log(data);
 					resultado = $.parseJSON(data.d);
 					$.mobile.loading('hide');
 					if ( resultado.code == 1){
@@ -129,7 +129,7 @@ function getContenedores(codigo){
         success : function(data, textStatus, jqXHR) {
 		resultado = $.parseJSON(data.d);
 		
-			console.log(resultado);
+			//console.log(resultado);
 			$.mobile.loading('hide');
 			if ( resultado.length > 0 ){				 
 			 
