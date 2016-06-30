@@ -5,7 +5,7 @@
 $(document).ready(function(e) {  
 
 			  
-	$("#btnRegresar").attr("href","transporte.html?puerto=" + $.QueryString["puerto"] );	
+	//$("#btnRegresar").attr("href","transporte.html?puerto=" + $.QueryString["puerto"] );	
 	getConfiguracion();
 	
 	 $("form").keypress(function(e) {
