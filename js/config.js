@@ -37,7 +37,7 @@ $(document).ready(function(e) {
 						 
 						 getConfiguracion();
 					 }			  
-					 alerta(resultado.message);
+					 
 				 	
 				},	
 				error : function(jqxhr) 
@@ -87,11 +87,16 @@ function getConfiguracion(){
 				 	for (var i = 0; i<resultado.length;i++){					
 					//$("#anno").val(resultado[i].anno_manifiesto);	
 					//$("#numero").val(resultado[i].nro_manifiesto);	
+					
+					$("#panelManifiestos").append('<div data-role="collapsible"><h3>' + resultado[i].anno_manifiesto + ' - ' + resultado[i].nro_manifiesto + '</h3><div id="panel' + resultado[i].IDConfiguracion  + '" class="content-panel"></div></div>');
+					$("#panelManifiestos" ).collapsibleset("refresh");
+					$("#panelManifiestos .content-panel").last().append('<ul class="listview" id="lista' + resultado[i].IDConfiguracion  + '" data-role="listview" data-text="" data-filter="true" data-inset="true"></ul>');           
+					$( "#lista" + resultado[i].IDConfiguracion ).listview();  
 					getContenedores(resultado[i].IDConfiguracion);				 
 				}
 			}
 			else{				 
-				$(".panelCTN").find("form").hide();
+				//$(".panelCTN").find("form").hide();
 				$(".panelCTN").find("h3").remove();
 				$(".panelCTN").append("<h3>No hay configuración para el dia de hoy</h3>").hide().fadeIn("fast");		 				
 			}
@@ -116,7 +121,7 @@ function getContenedores(codigo){
 	
 	$.mobile.loading('show');
 	//alert($.QueryString["idChofer"]);   
-	$("#listTransporte").html("");  
+	$("#lista" + codigo).html("");  
 	//alert(codigo);
 	$.ajax({
         url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/consultarContenedores",
@@ -141,15 +146,15 @@ function getContenedores(codigo){
 					html += "<tr><td colspan='2'><b>Precinto: </b>" +  resultado[i].Precinto +  "</td></tr>";
 					html += "<tr><td><b>Size:</b> " + resultado[i].Size +  "</td><td><b>Tipo:</b> " + resultado[i].Tipo +  "</td></tr>";
 					html += "</table>";
-					$("#listTransporte").append('<li><a   href="#">  ' + html +  '</a></li> ');						 
+					$("#lista" + codigo).append('<li><a   href="#">  ' + html +  '</a></li> ');						 
 				}
-				 
-				 $( "#listTransporte" ).listview( "refresh" );  
+				 alerta("Se registro " + resultado.length + " contenedores");
+				 $("#lista" + codigo).listview( "refresh" );  
 			}
 			else{
 				if ( $("#listTransporte li").length < 2 ) {				 
-					$(".panelCTN").find("form").hide();
-					$(".panelCTN").append("<h3>No se encontrarón contenedores</h3>").hide().fadeIn("fast");	
+					$("#lista" + codigo).parent().find("form").hide();
+					$("#lista" + codigo).parent().append("<h3>No se encontrarón contenedores</h3>").hide().fadeIn("fast");	
 				}
 			}
         },
