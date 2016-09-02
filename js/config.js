@@ -6,7 +6,7 @@ $(document).ready(function(e) {
 
 			  
 	//$("#btnRegresar").attr("href","transporte.html?puerto=" + $.QueryString["puerto"] );	
-	getConfiguracion();
+	getConfiguracion(0);
 	
 	 $("form").keypress(function(e) {
         if (e.which == 13) {
@@ -33,12 +33,12 @@ $(document).ready(function(e) {
 					//console.log(data);
 					resultado = $.parseJSON(data.d);
 					$.mobile.loading('hide');
-					if ( resultado.code == 1){
-						 
-						 getConfiguracion();
-					 }			  
-					 
-				 	
+					if ( resultado.code == 1){						 
+						 getConfiguracion(1);
+					 }	
+					 if ( resultado.code == 2){						 
+						 alerta(resultado.message);
+					 }				 	
 				},	
 				error : function(jqxhr) 
 				{
@@ -60,7 +60,7 @@ function alertDismissed(){
 }
 //
 
-function getConfiguracion(){
+function getConfiguracion(flag){
 	
 	
 	
@@ -69,7 +69,7 @@ function getConfiguracion(){
 	$("#listTransporte").html("");  
 	//alert(codigo);
 	$.ajax({
-        url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/consultarManifiesto",
+        url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/consultarManifiestoPendientes",
         type: "POST",
 		//crossDomain: true,
         dataType : "json",
@@ -88,11 +88,11 @@ function getConfiguracion(){
 					//$("#anno").val(resultado[i].anno_manifiesto);	
 					//$("#numero").val(resultado[i].nro_manifiesto);	
 					
-					$("#panelManifiestos").append('<div data-role="collapsible"><h3>' + resultado[i].anno_manifiesto + ' - ' + resultado[i].nro_manifiesto + '</h3><div id="panel' + resultado[i].IDConfiguracion  + '" class="content-panel"></div></div>');
+					$("#panelManifiestos").append('<div data-role="collapsible"><h3>' + resultado[i].anno_manifiesto + ' - ' + resultado[i].nro_manifiesto + '<span style="float:right;">Total de CTN: ' + resultado[i].total_ctn + '</span></h3><div id="panel' + resultado[i].IDConfiguracion  + '" class="content-panel"></div></div>');
 					$("#panelManifiestos" ).collapsibleset("refresh");
 					$("#panelManifiestos .content-panel").last().append('<ul class="listview" id="lista' + resultado[i].IDConfiguracion  + '" data-role="listview" data-text="" data-filter="true" data-inset="true"></ul>');           
 					$( "#lista" + resultado[i].IDConfiguracion ).listview();  
-					getContenedores(resultado[i].IDConfiguracion);				 
+					getContenedores(resultado[i].IDConfiguracion,flag);				 
 				}
 			}
 			else{				 
@@ -115,7 +115,7 @@ function getConfiguracion(){
 
 
 
-function getContenedores(codigo){
+function getContenedores(codigo,flag){
 	
 	
 	
@@ -124,7 +124,7 @@ function getContenedores(codigo){
 	$("#lista" + codigo).html("");  
 	//alert(codigo);
 	$.ajax({
-        url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/consultarContenedores",
+        url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/consultarContenedoresTodos",
         type: "POST",
 		//crossDomain: true,
         dataType : "json",
@@ -134,7 +134,7 @@ function getContenedores(codigo){
         success : function(data, textStatus, jqXHR) {
 		resultado = $.parseJSON(data.d);
 		
-			//console.log(resultado);
+			console.log(resultado);
 			$.mobile.loading('hide');
 			if ( resultado.length > 0 ){				 
 			 
@@ -142,14 +142,16 @@ function getContenedores(codigo){
 				for (var i = 0; i<resultado.length;i++){					
 					
 				 var html = "<table cellpadding='0' cellspacing='0' width='100%'>";
-					html += "<tr><td colspan='2' class='titulo'>CTN:  " + resultado[i].NroContenedor +  "</td></tr>";
+					html += "<tr><td colspan='2' class='titulo'>CTN:  " + resultado[i].NroContenedor +  "<img src='img/estado_" + ( resultado[i].Seg_Est ? "1" : "2") + ".png' style='float:right; margin-right:18px;' /></td></tr>";
 					html += "<tr><td colspan='2'><b>Precinto: </b>" +  resultado[i].Precinto +  "</td></tr>";
 					html += "<tr><td><b>Size:</b> " + resultado[i].Size +  "</td><td><b>Tipo:</b> " + resultado[i].Tipo +  "</td></tr>";
 					html += "</table>";
 					$("#lista" + codigo).append('<li><a   href="#">  ' + html +  '</a></li> ');						 
 				}
-				 alerta("Se registro " + resultado.length + " contenedores");
-				 $("#lista" + codigo).listview( "refresh" );  
+				if ( flag == 1 )
+					alerta("Se registro " + resultado.length + " contenedores");
+				 
+				$("#lista" + codigo).listview( "refresh" );  
 			}
 			else{
 				if ( $("#listTransporte li").length < 2 ) {				 

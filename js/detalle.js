@@ -27,7 +27,7 @@ $(document).ready(function(e) {
 			dropdownContent = "";
 			
 			$.ajax({
-				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/consultarContenedores",
+				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/consultarContenedoresPendientes",
 				type: "POST",
 				dataType : "json",
 				data : '{"IDConfig" : 0, "NroContenedor":"'+ value +'"}',
