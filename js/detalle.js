@@ -27,10 +27,10 @@ $(document).ready(function(e) {
 			dropdownContent = "";
 			
 			$.ajax({
-				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/consultarContenedoresPendientes",
+				url : "http://www.meridian.com.pe/ServiciosWEB_TEST/TransportesMeridian/Operativo/WSOperativo.asmx/consultarContenedoresPendientesPuerto",
 				type: "POST",
 				dataType : "json",
-				data : '{"IDConfig" : 0, "NroContenedor":"'+ value +'"}',
+				data : '{"IDConfig" : 0, "NroContenedor":"'+ value +'", "puerto":"'+ $.QueryString["puerto"] +'"}',
 				contentType: "application/json; charset=utf-8",
 				success : function(data, textStatus, jqXHR) {
 					resultado = $.parseJSON(data.d);
@@ -39,8 +39,7 @@ $(document).ready(function(e) {
 						for (var i = 0; i<resultado.length;i++){					
 							$(".autocompleteContenedor").append("<li class='ui-li-static ui-body-inherit' id='" + resultado[i].IDConfiguracion + "'>" + resultado[i].NroContenedor + "</li>");	
 						}						
-					}
-					
+					}					
 				},
 		
 				error : function(jqxhr) 
