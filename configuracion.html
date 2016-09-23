@@ -53,6 +53,19 @@
 	.ui-input-text{
 		margin:0px !important;
 	}
+	
+	.btnFinalizar{
+		display:block;
+		width:90%;
+		margin:auto;
+		margin-top:10px;
+		padding:10px;
+		color:white !important;
+		border-radius:8px;
+		text-decoration:none;
+		text-align:center;
+		background-color:#F00;
+	}
 	</style>
 <title>OPERATIVO</title>
 </head>
@@ -85,6 +98,16 @@
             <tr><td><input type="text" name="anno" id="anno" /></td></tr>
            <tr><td><b>Numero de Manifiesto:</b> </td><tr>
            <tr><td><input type="text" name="numero" id="numero" /></td></tr>
+            <tr><td><b>Puerto:</b> </td><tr>
+           <tr><td>
+           <select name="puerto" id="puerto">
+           	<option value="0">Seleccionar</option>
+            <option value="dpw">DPW</option>
+            <option value="apm">APM</option>
+           </select>
+           
+           </td></tr>
+           
        
 		</table>
         
