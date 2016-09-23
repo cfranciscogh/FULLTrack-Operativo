@@ -91,7 +91,7 @@ function alertDismissed(){
 function CerrarOperacion(a){
 	
 	if (confirm('¿Esta seguro de finalizar esta operación?')) {
-		$("#anno").focus();
+		//$("#anno").focus();
 		
 		$.mobile.loading('show');			
 			var parametros = new Object();
